@@ -1,13 +1,6 @@
 services:
   - type: web
-    name: pandal-vision-api
-    runtime: python
-    plan: free
+    name: multimodal-qa-api
+    env: python
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
-    envVars:
-      - key: GROQ_API_KEY
-        sync: false
-      - key: GROQ_VISION_MODEL
-        value: meta-llama/llama-4-scout-17b-16e-instruct
- 
