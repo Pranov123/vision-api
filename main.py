@@ -1,4 +1,3 @@
-import base64
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,6 +7,7 @@ from groq import Groq
 # ----------------------------
 # Groq Setup
 # ----------------------------
+# Ensure GROQ_API_KEY is set in your Render environment variables
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 # ----------------------------
@@ -46,9 +46,9 @@ Rules:
 """
 
     try:
-        # Llama 3.2 Vision supports base64 encoded images directly in the data URL format
+        # Use a currently supported multimodal model
         response = client.chat.completions.create(
-            model="llama-3.2-90b-vision-preview",
+            model="meta-llama/llama-4-scout-17b-16e-instruct",
             messages=[
                 {
                     "role": "user",
@@ -56,6 +56,8 @@ Rules:
                         {"type": "text", "text": prompt},
                         {
                             "type": "image_url",
+                            # Assuming incoming base64 string does NOT have the data-uri prefix.
+                            # If it does, remove the prefix string below.
                             "image_url": {"url": f"data:image/jpeg;base64,{req.image_base64}"},
                         },
                     ],
@@ -72,5 +74,6 @@ Rules:
         return {"answer": answer}
 
     except Exception as e:
-        print(f"Error: {e}")
+        # Log the error to the console so you can see it in Render logs
+        print(f"Error during extraction: {e}")
         return {"answer": ""}
